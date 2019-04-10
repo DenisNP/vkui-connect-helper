@@ -65,6 +65,11 @@ VKC.send('VKWebAppGetUserInfo', {})
 ### Async-режим
 Мы всегда можем использовать синтаксис `async/await` для получения результата, но в такой ситуации для поимки ошибки нам придётся оборачивать код в `try/catch` блок. Чтобы избежать этого, в функцию `VKC.init()` можно передать параметр `asyncMode: true`. Тогда результат работы методов будет такой:
 ```js
+VKC.init({
+  ...
+  asyncStyle: true,
+}); 
+
 // some async block
 const [data, error] = await VKC.send('VKWebAppCallAPIMethod', { method: 'friends.get' });
 
@@ -104,3 +109,42 @@ https://oauth.vk.com/authorize?client_id=CLIENT_ID&display=page&redirect_uri=&sc
 `https://cors-anywhere.herokuapp.com/https://api.vk.com/method/users.get?user_ids=1`
 
 Не забывайте про `/` в конце.
+
+## Поддерживаемые события
+Идеология этой библиотеки в том, чтобы создать ситуацию, максимально близкую к живым данным. На текущий момент реализована поддержка следующих событий:
+- `VKWebAppInit` — отправляется автоматически при инициализации библиотеки
+- `VKWebAppGetUserInfo` — получает данные владельца токена с помощью API
+- `VKWebAppGetAuthToken` — в DEV-режиме это событие ничего не делает, но вызов его обязателен, о чём библиотека предупреждает, чтобы не забыть вызвать его в основном режиме. Обратите внимание, `scope`, который передан сюда, будет актуален только в PROD-режиме. В DEV-режиме будет использоваться `scope`, полученный при создании токена
+- `VKWebAppCallAPIMethod` — вызывает настоящий метод API ВК, возвращает результат или ошибку
+- `VKWebAppGetGeodata` — вызывает функцию браузера о получении координат, после ответа пользователя возвращает результат или ошибку
+
+Проверить наличие поддержки нужного события можно с помощью
+```js
+VKC.supports('VKWebAppGetUserInfo'); // возвращает true
+```
+
+## Собственные функции для реакции на события
+Можно задать собственную функцию для ответа на событие, если встроенная вас не устраивает, или если событие ещё не поддерживается библиотекой. Функция должна возвращать **Promise**. На вход она принимает:
+
+- `params` — объект который будет потом передан в событие
+- `options` — текущие опции библиотеки
+
+```js
+import { MODE_DEV } from '@denisnp/vkui-connect-helper';
+
+VKC.define('VKWebAppGetEmail', (params, options) => {
+  // в options.mode хранится текущий режим MODE_DEV или MODE_PROD
+  return new Promise((resolve, reject) => {
+    if (options.mode === MODE_DEV) {
+        resolve({
+          type: 'VKWebAppGetEmailResult',
+          data: { 
+            email: 'blahblah@mail.com',
+            sign: ''
+          },
+        });
+    }
+  });
+});
+```
+
