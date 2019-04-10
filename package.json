@@ -1,0 +1,25 @@
+{
+  "name": "@denisnp/vkui-connect-helper",
+  "version": "0.0.1",
+  "description": "Promise-based vkui-connect mock with advanced functionality",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DenisNP/vkui-connect-helper.git"
+  },
+  "keywords": [
+    "vkui",
+    "vk",
+    "vkui-connect",
+    "vkui-connect-mock"
+  ],
+  "author": "Denis Peshekhonov",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/DenisNP/vkui-connect-helper/issues"
+  },
+  "homepage": "https://github.com/DenisNP/vkui-connect-helper#readme"
+}
