@@ -79,7 +79,7 @@ function setMode() {
                 defaultOptions.mode = MODE_DEV;
                 if (defaultOptions.enableLog) log(`VKC inited in ${MODE_DEV} mode`);
                 resolve([{}, null]);
-            }, 100);
+            }, 1000);
         }
     });
 }
