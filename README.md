@@ -148,3 +148,36 @@ VKC.define('VKWebAppGetEmail', (params, options) => {
 });
 ```
 
+## Шорткаты
+Для некоторых распространённых событий есть шорткаты
+
+### Авторизация
+```js
+VKC.auth(scope); // аналог VKC.send('VKWebAppGetAuthToken', { scope: ... } );
+
+// Не забываем, что это промис, и нужно обработать ответ:
+VKC.auth('friends,photos').then((authData) => {
+  if (authData.data.scope.indexOf('friends') >= 0) {
+    // пользователя дал нам друзей
+  }
+});
+```
+
+### Вызов API
+```js
+// в async-режиме
+const [result, fail] = await VKC.api('friends.get', { fields: 'sex' }); // это аналог вызова VKC.send('VKWebAppCallAPIMethod'...)
+
+if (result) {
+  const firstFriendSex = result.data.items[0].sex;
+}
+```
+
+## Поддержка остальных событий и участие в разработке
+Если кто-то возьмётся за реализацию ещё какие-то событий, присылайте пулл-реквесты. Не забывайте проверить свой код на соответствие правилам, я использую [code-style от Airbnb](https://github.com/airbnb/javascript) с отступом **4 пробела**.
+
+```bash
+npm run lint
+```
+
+Напоминаю, что идея библиотеки в приближенности к настоящим данным. И если некоторые значения получить из ВК в принципе невозможно (например, email пользователя), то вместо других можно написать работоспособную замену. 
