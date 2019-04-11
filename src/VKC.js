@@ -24,7 +24,7 @@ export const MODE_AUTO = 'AUTO';
 // options and internal vars
 let defaultOptions = {
     corsAddress: 'https://cors-anywhere.herokuapp.com/',
-    apiVersion: '5.92',
+    apiVersion: '5.95',
     accessToken: '',
     appId: 0,
     mode: MODE_AUTO,
