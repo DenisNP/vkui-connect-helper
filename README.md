@@ -23,7 +23,7 @@ import VKC from '@denisnp/vkui-connect-helper';
 
 ## Инициализация
 ```js
-VKC.init(options); // эта фукнция автоматически вызывает VKWebAppInit
+VKC.init(options); // эта функция автоматически вызывает VKWebAppInit
 ```
 ### options
 Поле | Тип | Описание | Обязательное ли | По-умолачнию
