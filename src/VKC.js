@@ -65,7 +65,7 @@ function setMode() {
             initWait(resolve);
         } else {
             initializationInProgress = true;
-            if (defaultOptions.mode === MODE_AUTO || defaultOptions.mode === MODE_PROD) {
+            if (defaultOptions.mode === MODE_AUTO) {
                 // try to init with VKConnect
                 connect.send('VKWebAppInit', {}).then((data) => {
                     if (initializationFinished) {
@@ -87,8 +87,6 @@ function setMode() {
                     clearTimeout(timeout);
                     resolve([null, error]);
                 });
-            }
-            if (defaultOptions.mode === MODE_AUTO || defaultOptions.mode === MODE_DEV) {
                 // if it will not inited in 1000ms, change mode
                 timeout = setTimeout(() => {
                     defaultOptions.mode = MODE_DEV;
@@ -96,6 +94,15 @@ function setMode() {
                     if (defaultOptions.enableLog) log(`VKC inited in ${MODE_DEV} mode`);
                     resolve([{}, null]);
                 }, defaultOptions.initWaitTime);
+            } else {
+                if (defaultOptions.mode === MODE_PROD) {
+                    // there is probably no answer prom Promise at all
+                    connect.send('VKWebAppInit', {});
+                }
+                // force mode by options
+                initializationFinished = true;
+                if (defaultOptions.enableLog) log(`VKC inited in ${defaultOptions.mode} mode`);
+                resolve([{}, null]);
             }
         }
     });
