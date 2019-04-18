@@ -65,34 +65,38 @@ function setMode() {
             initWait(resolve);
         } else {
             initializationInProgress = true;
-            // try to init with VKConnect
-            connect.send('VKWebAppInit', {}).then((data) => {
-                if (initializationFinished) {
-                    console.warn('Too long initialization, please, control mode and initWaitTime options');
-                }
-                defaultOptions.mode = MODE_PROD;
-                initializationFinished = true;
-                if (defaultOptions.enableLog) log(`VKC inited in ${MODE_PROD} mode`);
-                clearTimeout(timeout);
-                resolve([data, null]);
-            }).catch((error) => {
-                // if it was inited with error mode is still PROD because VKConnect works
-                if (initializationFinished) {
-                    console.warn('Too long initialization, please, control mode and initWaitTime options');
-                }
-                defaultOptions.mode = MODE_PROD;
-                initializationFinished = true;
-                if (defaultOptions.enableLog) log(`VKC inited in ${MODE_PROD} mode`);
-                clearTimeout(timeout);
-                resolve([null, error]);
-            });
-            // if it will not inited in 100ms, change mode
-            timeout = setTimeout(() => {
-                defaultOptions.mode = MODE_DEV;
-                initializationFinished = true;
-                if (defaultOptions.enableLog) log(`VKC inited in ${MODE_DEV} mode`);
-                resolve([{}, null]);
-            }, defaultOptions.initWaitTime);
+            if (defaultOptions.mode === MODE_AUTO || defaultOptions.mode === MODE_PROD) {
+                // try to init with VKConnect
+                connect.send('VKWebAppInit', {}).then((data) => {
+                    if (initializationFinished) {
+                        console.warn('Too long initialization, please, control mode and initWaitTime options');
+                    }
+                    defaultOptions.mode = MODE_PROD;
+                    initializationFinished = true;
+                    if (defaultOptions.enableLog) log(`VKC inited in ${MODE_PROD} mode`);
+                    clearTimeout(timeout);
+                    resolve([data, null]);
+                }).catch((error) => {
+                    // if it was inited with error mode is still PROD because VKConnect works
+                    if (initializationFinished) {
+                        console.warn('Too long initialization, please, control mode and initWaitTime options');
+                    }
+                    defaultOptions.mode = MODE_PROD;
+                    initializationFinished = true;
+                    if (defaultOptions.enableLog) log(`VKC inited in ${MODE_PROD} mode`);
+                    clearTimeout(timeout);
+                    resolve([null, error]);
+                });
+            }
+            if (defaultOptions.mode === MODE_AUTO || defaultOptions.mode === MODE_DEV) {
+                // if it will not inited in 1000ms, change mode
+                timeout = setTimeout(() => {
+                    defaultOptions.mode = MODE_DEV;
+                    initializationFinished = true;
+                    if (defaultOptions.enableLog) log(`VKC inited in ${MODE_DEV} mode`);
+                    resolve([{}, null]);
+                }, defaultOptions.initWaitTime);
+            }
         }
     });
 }
