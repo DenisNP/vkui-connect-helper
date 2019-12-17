@@ -116,6 +116,11 @@ async function send(event, params) {
                         data: 'Auth required',
                     }];
                 }
+                // because of closure probably
+                if (defaultOptions.log) log('Automatic token received');
+                accessTokenGot = authRes[0].data.access_token;
+                defaultOptions.accessToken = accessTokenGot;
+                defaultOptions.appId = params.app_id;
             } else {
                 console.error('Please, call API methods only after VKWebAppGetAuthToken or shortcut VKC.auth(scope)');
                 return nullValue();
