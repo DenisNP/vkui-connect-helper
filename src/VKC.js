@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign,no-case-declarations */
-import connect from '@vkontakte/vkui-connect-promise';
+import connect from '@vkontakte/vk-connect';
 import { toAsync, log } from './utils';
 
 // Handlers
@@ -24,88 +24,42 @@ export const MODE_AUTO = 'AUTO';
 // options and internal vars
 let defaultOptions = {
     corsAddress: 'https://cors-anywhere.herokuapp.com/',
-    apiVersion: '5.95',
+    apiVersion: '5.103',
     accessToken: '',
     appId: 0,
     mode: MODE_AUTO,
     asyncStyle: false,
     enableLog: true,
-    initWaitTime: 1000,
 };
 
 let accessTokenGot = '';
-let timeout = -1;
-let initializationInProgress = false;
-let initializationStarted = false;
 let initializationFinished = false;
-
-/*
-    Wait for init process ready
- */
-function initWait(resolve) {
-    if (initializationFinished) {
-        resolve([{}, null]);
-    } else {
-        setTimeout(() => {
-            initWait(resolve);
-        }, 100);
-    }
-}
 
 /*
     Check if there is VKConnect presented and set mode to DEV or PROD
  */
 function setMode() {
-    return new Promise((resolve) => {
-        if (initializationFinished) {
-            // if mode already assigned just continue
-            resolve([{}, null]);
-        } else if (initializationInProgress) {
-            // initialization process already run, wait for its finish
-            initWait(resolve);
-        } else {
-            initializationInProgress = true;
-            if (defaultOptions.mode === MODE_AUTO) {
-                // try to init with VKConnect
-                connect.send('VKWebAppInit', {}).then((data) => {
-                    if (initializationFinished) {
-                        console.warn('Too long initialization, please, control mode and initWaitTime options');
-                    }
-                    defaultOptions.mode = MODE_PROD;
-                    initializationFinished = true;
-                    if (defaultOptions.enableLog) log(`VKC inited in ${MODE_PROD} mode`);
-                    clearTimeout(timeout);
-                    resolve([data, null]);
-                }).catch((error) => {
-                    // if it was inited with error mode is still PROD because VKConnect works
-                    if (initializationFinished) {
-                        console.warn('Too long initialization, please, control mode and initWaitTime options');
-                    }
-                    defaultOptions.mode = MODE_PROD;
-                    initializationFinished = true;
-                    if (defaultOptions.enableLog) log(`VKC inited in ${MODE_PROD} mode`);
-                    clearTimeout(timeout);
-                    resolve([null, error]);
-                });
-                // if it will not inited in 1000ms, change mode
-                timeout = setTimeout(() => {
-                    defaultOptions.mode = MODE_DEV;
-                    initializationFinished = true;
-                    if (defaultOptions.enableLog) log(`VKC inited in ${MODE_DEV} mode`);
-                    resolve([{}, null]);
-                }, defaultOptions.initWaitTime);
+    if (!initializationFinished) {
+        if (defaultOptions.mode === MODE_AUTO) {
+            // try to init with VKConnect
+            if (connect.isWebView() || !defaultOptions.accessToken) {
+                connect.send('VKWebAppInit', {});
+                defaultOptions.mode = MODE_PROD;
+                if (defaultOptions.enableLog) log(`VKC inited in ${MODE_PROD} mode`);
             } else {
-                if (defaultOptions.mode === MODE_PROD) {
-                    // there is probably no answer prom Promise at all
-                    connect.send('VKWebAppInit', {});
-                }
-                // force mode by options
-                initializationFinished = true;
+                defaultOptions.mode = MODE_DEV;
                 if (defaultOptions.enableLog) log(`VKC inited in ${defaultOptions.mode} mode`);
-                resolve([{}, null]);
             }
+        } else {
+            if (defaultOptions.mode === MODE_PROD) {
+                // there is probably no answer prom Promise at all
+                connect.send('VKWebAppInit', {});
+            }
+            // force mode by options
+            if (defaultOptions.enableLog) log(`VKC inited in ${defaultOptions.mode} mode`);
         }
-    });
+        initializationFinished = true;
+    }
 }
 
 /*
@@ -145,11 +99,10 @@ function mock(event, params) {
  */
 async function send(event, params) {
     if (!params) params = {};
-    if (!initializationStarted) {
+    if (!initializationFinished) {
         console.error('You forgot to call VKC.init(...)');
         return nullValue();
     }
-    if (!initializationFinished) await setMode(); // wait for initialization finish
     // check some params
     if (event === 'VKWebAppCallAPIMethod') {
         if (!accessTokenGot) {
@@ -178,7 +131,7 @@ async function send(event, params) {
     } else {
         // call VKConnect
         caller = 'VKConnect';
-        result = await toAsync(connect.send(event, params));
+        result = await toAsync(connect.sendPromise(event, params));
     }
 
     // if it was auth, store token
@@ -204,6 +157,10 @@ async function send(event, params) {
     });
 }
 
+function sendPromise(event, params) {
+    return send(event, params);
+}
+
 /*
     Shortcut for VKWebAppCallAPIMethod
  */
@@ -223,8 +180,7 @@ function auth(scope) {
  */
 function init(options) {
     defaultOptions = Object.assign(defaultOptions, options);
-    initializationStarted = true;
-    return setMode(true);
+    setMode();
 }
 
 /*
@@ -236,6 +192,7 @@ function define(event, handler) {
 
 export default {
     send,
+    sendPromise,
     init,
     auth,
     api,

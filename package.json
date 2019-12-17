@@ -30,6 +30,6 @@
   },
   "homepage": "https://github.com/DenisNP/vkui-connect-helper#readme",
   "dependencies": {
-    "@vkontakte/vkui-connect-promise": "^0.1.19"
+    "@vkontakte/vk-connect": "^1.7.0"
   }
 }
