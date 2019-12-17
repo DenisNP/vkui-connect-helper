@@ -30,6 +30,7 @@ let defaultOptions = {
     mode: MODE_AUTO,
     asyncStyle: false,
     enableLog: true,
+    defaultScope: '',
 };
 
 let accessTokenGot = '';
@@ -106,8 +107,19 @@ async function send(event, params) {
     // check some params
     if (event === 'VKWebAppCallAPIMethod') {
         if (!accessTokenGot) {
-            console.error('Please, call API methods only after VKWebAppGetAuthToken or shortcut VKC.auth(scope)');
-            return nullValue();
+            if (defaultOptions.defaultScope) {
+                // eslint-disable-next-line no-use-before-define
+                const authRes = await auth(defaultOptions.defaultScope);
+                if (!authRes[0]) {
+                    return [null, {
+                        type: 'VKWebAppCallAPIMethodFailed',
+                        data: 'Auth required',
+                    }];
+                }
+            } else {
+                console.error('Please, call API methods only after VKWebAppGetAuthToken or shortcut VKC.auth(scope)');
+                return nullValue();
+            }
         }
         // fix parameters if needed
         if (!params.params) params.params = {};
