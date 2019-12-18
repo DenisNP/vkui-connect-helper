@@ -179,6 +179,54 @@ function sendPromise(event, params) {
 }
 
 /*
+    Upload wall photo
+*/
+async function uploadWallPhoto(file, groupId, caption) {
+    const result = [null, null];
+
+    const params = {};
+    if (groupId) params.group_id = groupId;
+    // eslint-disable-next-line no-use-before-define
+    const uploadServer = await api('photos.getWallUploadServer', {});
+    const uploadUrl = uploadServer[0] && uploadServer[0].data && uploadServer[0].data.upload_url;
+    if (uploadUrl) {
+        const photo = file;
+        const formData = new FormData();
+        formData.append('photo', photo);
+
+        try {
+            const response = await fetch(uploadUrl, { method: 'POST', body: formData });
+            if (response.ok) {
+                const toSave = await response.json();
+                if (caption) toSave.caption = caption;
+                if (groupId) toSave.group_id = groupId;
+                // eslint-disable-next-line no-use-before-define
+                const saved = await api('photos.saveWallPhoto', toSave);
+                return saved;
+            }
+
+            // upload error
+            result[1] = await ((response && response.text()) || 'Network error');
+        } catch (err) {
+            result[1] = err;
+        }
+    } else {
+        // upload server error
+        [, result[1]] = uploadServer;
+    }
+
+    // return async style
+    if (defaultOptions.asyncStyle) {
+        return result;
+    }
+    // promise style
+    return new Promise((resolve, reject) => {
+        if (result[0]) resolve(result[0]);
+        else reject(result[1]);
+    });
+}
+
+/*
     Shortcut for VKWebAppCallAPIMethod
  */
 function api(method, params) {
@@ -213,6 +261,7 @@ export default {
     init,
     auth,
     api,
+    uploadWallPhoto,
     supports,
     define,
 };
