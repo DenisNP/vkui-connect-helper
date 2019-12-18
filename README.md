@@ -186,7 +186,7 @@ if (result) {
 
 ### Загрузка фото на стену
 ```js
-const [result, fail] = uploadWallPhoto(file, groupId, caption);
+const [result, fail] = await VKC.uploadWallPhoto(file, groupId, caption);
 ```
 В поле `file` нужно передавать результат работы `<input type="file"/>`. В `result` приходит ответ от метода `photos.saveWallPhoto`, если всё прошло хорошо.
 
