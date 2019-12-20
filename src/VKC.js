@@ -38,6 +38,7 @@ export const API_ADDRESS = 'https://api.vk.com';
 export const MODE_DEV = 'DEV';
 export const MODE_PROD = 'PROD';
 export const MODE_AUTO = 'AUTO';
+export const SCOPE_EMPTY = 'empty';
 
 // options and internal vars
 let defaultOptions = {
@@ -120,6 +121,16 @@ function nullValue() {
     });
 }
 
+function addScope(scope) {
+    const s = scope === '' ? SCOPE_EMPTY : scope;
+    if (currentScope.indexOf(s) >= 0) return;
+
+    if (currentScope !== '') {
+        currentScope += ',';
+    }
+    currentScope += scope;
+}
+
 /*
     Auto auth
 */
@@ -135,10 +146,7 @@ async function autoAuth(scope, addToScopes) {
 
     if (result[0]) {
         if (addToScopes) {
-            if (currentScope !== '') {
-                currentScope += ',';
-            }
-            currentScope += result[0].data.scope;
+            addScope(result[0].data.scope);
         }
         accessTokenGot = result[0].data.access_token;
         defaultOptions.accessToken = accessTokenGot;
@@ -224,9 +232,13 @@ async function send(event, params) {
 
     // if it was auth, store token
     if (event === 'VKWebAppGetAuthToken' && result[0] && result[0].data.access_token) {
+        if (!accessTokenGot) {
+            addScope(SCOPE_EMPTY);
+        }
         accessTokenGot = result[0].data.access_token;
         defaultOptions.accessToken = accessTokenGot;
         defaultOptions.appId = params.app_id;
+        addScope(result[0].data.scope);
     }
 
     // log for dev environment
@@ -308,7 +320,7 @@ function api(method, params, needScope) {
     Shortcut for VKWebAppAccessToken
  */
 function auth(scope) {
-    return send('VKWebAppGetAuthToken', { scope });
+    return send('VKWebAppGetAuthToken', { scope: (scope === SCOPE_EMPTY ? '' : scope) });
 }
 
 /*

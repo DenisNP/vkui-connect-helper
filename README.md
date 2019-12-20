@@ -184,6 +184,11 @@ VKC.auth('friends,photos').then((authData) => {
 });
 ```
 
+Есть специальная константа `SCOPE_EMPTY`, которая показывает скоуп "Общая информация".
+```js
+import { SCOPE_EMPTY } from '@denisnp/vkui-connect-helper';
+```
+
 ### Вызов API
 Если была вызвана авторизация, то становится доступна отправка события `VKWebAppCallAPIMethod`. Можно не передавать в параметры поля `v` и `access_token`, библиотека сделает это за вас.
 ```js
