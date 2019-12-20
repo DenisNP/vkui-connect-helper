@@ -264,13 +264,13 @@ function sendPromise(event, params) {
 /*
     Upload wall photo
 */
-async function uploadWallPhoto(file, groupId, caption) {
+async function uploadWallPhoto(file, groupId, caption, requestAuthWithScope) {
     const result = [null, null];
 
     const params = {};
     if (groupId) params.group_id = groupId;
     // eslint-disable-next-line no-use-before-define
-    const uploadServer = await api('photos.getWallUploadServer', {});
+    const uploadServer = await api('photos.getWallUploadServer', {}, requestAuthWithScope);
     const uploadUrl = uploadServer[0] && uploadServer[0].data && uploadServer[0].data.upload_url;
     if (uploadUrl) {
         const photo = file;
