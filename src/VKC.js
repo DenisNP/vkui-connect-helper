@@ -210,7 +210,7 @@ async function send(event, params) {
         if (!params.params.v) params.params.v = defaultOptions.apiVersion;
         if (!params.params.access_token) params.params.access_token = accessTokenGot;
     }
-    if (event === 'VKWebAppGetAuthToken') {
+    if (event === 'VKWebAppGetAuthToken' || event === 'VKWebAppGetCommunityAuthToken') {
         if (!params.app_id) params.app_id = parseInt(defaultOptions.appId, 10);
         if (!params.app_id) {
             console.error('You forgot app_id parameter in init options or auth call');
