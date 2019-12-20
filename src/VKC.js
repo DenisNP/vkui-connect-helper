@@ -7,12 +7,22 @@ import VKWebAppCallAPIMethod from './handlers/VKWebAppCallAPIMethod';
 import VKWebAppGetUserInfo from './handlers/VKWebAppGetUserInfo';
 import VKWebAppGetAuthToken from './handlers/VKWebAppGetAuthToken';
 import VKWebAppGetGeodata from './handlers/VKWebAppGetGeodata';
+import VKWebAppCopyText from './handlers/VKWebAppCopyText';
+import VKWebAppShowWallPostBox from './handlers/VKWebAppShowWallPostBox';
+import VKWebAppShare from './handlers/VKWebAppShare';
+import VKWebAppGetCommunityAuthToken from './handlers/VKWebAppGetCommunityAuthToken';
+import VKWebAppShowCommunityWidgetPreviewBox from './handlers/VKWebAppShowCommunityWidgetPreviewBox';
 
 const handlers = {
     VKWebAppCallAPIMethod,
     VKWebAppGetUserInfo,
     VKWebAppGetAuthToken,
     VKWebAppGetGeodata,
+    VKWebAppCopyText,
+    VKWebAppShowWallPostBox,
+    VKWebAppShare,
+    VKWebAppGetCommunityAuthToken,
+    VKWebAppShowCommunityWidgetPreviewBox,
 };
 
 // constants
@@ -26,11 +36,13 @@ let defaultOptions = {
     corsAddress: 'https://cors-anywhere.herokuapp.com/',
     apiVersion: '5.103',
     accessToken: '',
+    communityToken: '',
     appId: 0,
     mode: MODE_AUTO,
     asyncStyle: false,
     enableLog: true,
     defaultScope: '',
+    disableAutoTheme: false,
 };
 
 let accessTokenGot = '';
@@ -60,6 +72,17 @@ function setMode() {
             if (defaultOptions.enableLog) log(`VKC inited in ${defaultOptions.mode} mode`);
         }
         initializationFinished = true;
+
+        // auto change theme
+        if (defaultOptions.mode === MODE_PROD && !defaultOptions.disableAutoTheme) {
+            connect.subscribe((e) => {
+                if (e.detail.type === 'VKWebAppUpdateConfig') {
+                    const schemeAttribute = document.createAttribute('scheme');
+                    schemeAttribute.value = e.detail.data.scheme ? e.detail.data.scheme : 'client_light';
+                    document.body.attributes.setNamedItem(schemeAttribute);
+                }
+            });
+        }
     }
 }
 
