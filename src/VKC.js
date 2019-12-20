@@ -13,6 +13,9 @@ import VKWebAppShare from './handlers/VKWebAppShare';
 import VKWebAppGetCommunityAuthToken from './handlers/VKWebAppGetCommunityAuthToken';
 import VKWebAppShowCommunityWidgetPreviewBox from './handlers/VKWebAppShowCommunityWidgetPreviewBox';
 import VKWebAppAllowNotifications from './handlers/VKWebAppAllowNotifications';
+import VKWebAppStorageGet from './handlers/VKWebAppStorageGet';
+import VKWebAppStorageGetKeys from './handlers/VKWebAppStorageGetKeys';
+import VKWebAppStorageSet from './handlers/VKWebAppStorageSet';
 
 const handlers = {
     VKWebAppCallAPIMethod,
@@ -25,6 +28,9 @@ const handlers = {
     VKWebAppGetCommunityAuthToken,
     VKWebAppShowCommunityWidgetPreviewBox,
     VKWebAppAllowNotifications,
+    VKWebAppStorageGet,
+    VKWebAppStorageGetKeys,
+    VKWebAppStorageSet,
 };
 
 // constants

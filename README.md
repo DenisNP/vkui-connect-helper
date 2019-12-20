@@ -133,6 +133,9 @@ https://oauth.vk.com/authorize?client_id=CLIENT_ID&display=page&redirect_uri=&sc
 - `VKWebAppShowCommunityWidgetPreviewBox` — код виджета проверяется на валидность и выводится в консоль
 - `VKWebAppShowWallPostBox` — **вызывается метод API** `wall.post` с вашим `options.accessToken`
 - `VKWebAppAllowNotifications` — вызывается браузерный метод запроса уведомлений, результат всегда `true`
+- `VKWebAppStorageGetKeys` — весь блок Storage работает с `localStorage`
+- `VKWebAppStorageGet` — весь блок Storage работает с `localStorage`
+- `VKWebAppStorageSet` — весь блок Storage работает с `localStorage`
 
 Проверить наличие поддержки нужного события можно с помощью
 ```js
