@@ -271,7 +271,10 @@ async function uploadWallPhoto(file, groupId, caption, requestAuthWithScope) {
     if (groupId) params.group_id = groupId;
     // eslint-disable-next-line no-use-before-define
     const uploadServer = await api('photos.getWallUploadServer', {}, requestAuthWithScope);
-    const uploadUrl = uploadServer[0] && uploadServer[0].data && uploadServer[0].data.upload_url;
+    const uploadUrl = uploadServer[0]
+        && uploadServer[0].data
+        && uploadServer[0].data.response.upload_url;
+
     if (uploadUrl) {
         const photo = file;
         const formData = new FormData();
