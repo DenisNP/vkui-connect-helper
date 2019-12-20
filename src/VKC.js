@@ -12,6 +12,7 @@ import VKWebAppShowWallPostBox from './handlers/VKWebAppShowWallPostBox';
 import VKWebAppShare from './handlers/VKWebAppShare';
 import VKWebAppGetCommunityAuthToken from './handlers/VKWebAppGetCommunityAuthToken';
 import VKWebAppShowCommunityWidgetPreviewBox from './handlers/VKWebAppShowCommunityWidgetPreviewBox';
+import VKWebAppAllowNotifications from './handlers/VKWebAppAllowNotifications';
 
 const handlers = {
     VKWebAppCallAPIMethod,
@@ -23,6 +24,7 @@ const handlers = {
     VKWebAppShare,
     VKWebAppGetCommunityAuthToken,
     VKWebAppShowCommunityWidgetPreviewBox,
+    VKWebAppAllowNotifications,
 };
 
 // constants
@@ -46,6 +48,7 @@ let defaultOptions = {
 };
 
 let accessTokenGot = '';
+let currentScope = '';
 let initializationFinished = false;
 
 /*
@@ -83,6 +86,10 @@ function setMode() {
                 }
             });
         }
+
+        if (defaultOptions.mode === MODE_DEV) {
+            currentScope = '*'; // set scope to anything because it is dev token
+        }
     }
 }
 
@@ -104,6 +111,41 @@ function nullValue() {
     // promise style
     return new Promise((resolve, reject) => {
         reject();
+    });
+}
+
+/*
+    Auto auth
+*/
+async function autoAuth(scope, addToScopes) {
+    let result = [null, null];
+    if (defaultOptions.asyncStyle) {
+        // eslint-disable-next-line no-use-before-define
+        result = await auth(scope);
+    } else {
+        // eslint-disable-next-line no-use-before-define
+        result = await toAsync(auth(scope));
+    }
+
+    if (result[0]) {
+        if (addToScopes) {
+            if (currentScope !== '') {
+                currentScope += ',';
+            }
+            currentScope += result[0].data.scope;
+        }
+        accessTokenGot = result[0].data.access_token;
+        defaultOptions.accessToken = accessTokenGot;
+        return null;
+    }
+
+    // error
+    if (defaultOptions.asyncStyle) {
+        return [null, result[1]];
+    }
+    // promise style
+    return new Promise((resolve, reject) => {
+        reject(result[1]);
     });
 }
 
@@ -131,19 +173,19 @@ async function send(event, params) {
     if (event === 'VKWebAppCallAPIMethod') {
         if (!accessTokenGot) {
             if (defaultOptions.defaultScope) {
-                // eslint-disable-next-line no-use-before-define
-                const authRes = await auth(defaultOptions.defaultScope);
-                if (!authRes[0]) {
-                    return [null, {
-                        type: 'VKWebAppCallAPIMethodFailed',
-                        data: 'Auth required',
-                    }];
+                const authRes = autoAuth(defaultOptions.defaultScope);
+                if (authRes) {
+                    return authRes;
                 }
-                // because of closure probably
-                if (defaultOptions.log) log('Automatic token received');
-                accessTokenGot = authRes[0].data.access_token;
-                defaultOptions.accessToken = accessTokenGot;
-                defaultOptions.appId = params.app_id;
+            } else if (params.needScope) {
+                const { needScope } = params;
+                delete params.needScope;
+                if (currentScope !== '*' && currentScope.indexOf(needScope) < 0) {
+                    const authRes = autoAuth(needScope, true);
+                    if (authRes) {
+                        return authRes;
+                    }
+                }
             } else {
                 console.error('Please, call API methods only after VKWebAppGetAuthToken or shortcut VKC.auth(scope)');
                 return nullValue();
@@ -252,8 +294,8 @@ async function uploadWallPhoto(file, groupId, caption) {
 /*
     Shortcut for VKWebAppCallAPIMethod
  */
-function api(method, params) {
-    return send('VKWebAppCallAPIMethod', { method, params });
+function api(method, params, needScope) {
+    return send('VKWebAppCallAPIMethod', { method, params: { ...params, needScope } });
 }
 
 /*
