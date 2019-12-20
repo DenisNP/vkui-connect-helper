@@ -209,9 +209,9 @@ const [result, fail] = await VKC.api('photos.get', { album_id: 'wall' }, 'photos
 
 ### Загрузка фото на стену
 ```js
-const [result, fail] = await VKC.uploadWallPhoto(file, groupId, caption);
+const [result, fail] = await VKC.uploadWallPhoto(file, groupId, caption, scope);
 ```
-В поле `file` нужно передавать результат работы `<input type="file"/>`. В `result` приходит ответ от метода `photos.saveWallPhoto`, если всё прошло хорошо.
+В поле `file` нужно передавать результат работы `<input type="file"/>`. В `result` приходит ответ от метода `photos.saveWallPhoto`, если всё прошло хорошо. Поле `scope` нужно для того, чтобы использовать автоматическую авторизацию, если это требуется.
 
 ## Поддержка остальных событий и участие в разработке
 Если кто-то возьмётся за реализацию ещё каких-то событий, присылайте пулл-реквесты. Не забывайте проверить свой код на соответствие правилам, в этом проекте я использую [code-style от Airbnb](https://github.com/airbnb/javascript) с отступом **4 пробела**.
