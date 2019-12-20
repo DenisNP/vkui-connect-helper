@@ -30,7 +30,7 @@ export default function (method, parameters, options) {
                 }
                 if (data.response) {
                     // Result OK
-                    return resolve(data.response);
+                    return resolve(data);
                 }
                 // API or parse error
                 return reject(data);
