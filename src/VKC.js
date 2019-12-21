@@ -231,7 +231,7 @@ async function send(event, params) {
     }
 
     // if it was auth, store token
-    if (event === 'VKWebAppGetAuthToken' && result[0] && result[0].data.access_token) {
+    if (event === 'VKWebAppGetAuthToken' && result[0] && result[0].data && result[0].data.access_token) {
         if (!accessTokenGot) {
             addScope(SCOPE_EMPTY);
         }
