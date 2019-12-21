@@ -56,6 +56,7 @@ let defaultOptions = {
 
 let accessTokenGot = '';
 let currentScope = '';
+let currentScheme = 'client_light';
 let initializationFinished = false;
 
 /*
@@ -88,7 +89,8 @@ function setMode() {
             connect.subscribe((e) => {
                 if (e.detail.type === 'VKWebAppUpdateConfig') {
                     const schemeAttribute = document.createAttribute('scheme');
-                    schemeAttribute.value = e.detail.data.scheme ? e.detail.data.scheme : 'client_light';
+                    currentScheme = e.detail.data.scheme ? e.detail.data.scheme : 'client_light';
+                    schemeAttribute.value = currentScheme;
                     document.body.attributes.setNamedItem(schemeAttribute);
                 }
             });
@@ -341,6 +343,13 @@ function define(event, handler) {
     handlers[event] = handler;
 }
 
+/*
+    Get scheme
+*/
+function isDark() {
+    return currentScheme !== 'client_light';
+}
+
 export default {
     send,
     sendPromise,
@@ -350,4 +359,5 @@ export default {
     uploadWallPhoto,
     supports,
     define,
+    isDark,
 };
