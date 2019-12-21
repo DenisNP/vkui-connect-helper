@@ -290,7 +290,7 @@ async function uploadWallPhoto(file, groupId, caption, requestAuthWithScope) {
         try {
             let response;
             if (defaultOptions.uploadProxy) {
-                response = await fetch(`${defaultOptions.uploadProxy}?server=${encodeURI(uploadUrl)}`, {
+                response = await fetch(`${defaultOptions.uploadProxy}?server=${encodeURIComponent(uploadUrl)}`, {
                     method: 'POST',
                     body: formData,
                 });
