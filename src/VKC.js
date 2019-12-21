@@ -290,7 +290,6 @@ async function uploadWallPhoto(file, groupId, caption, requestAuthWithScope) {
             const response = await fetch(uploadUrl, {
                 method: 'POST',
                 body: formData,
-                headers: { 'Content-Type': 'multipart/form-data' },
             });
             if (response.ok) {
                 const toSave = await response.json();
