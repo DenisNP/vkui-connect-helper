@@ -181,7 +181,7 @@ function mock(event, params) {
  */
 async function send(event, params) {
     if (defaultOptions.enableLog) {
-        console.log('...', event, params, currentScope, defaultOptions);
+        console.log(['...', event, params, accessTokenGot, currentScope]);
     }
     if (!params) params = {};
     if (!initializationFinished) {
@@ -320,7 +320,7 @@ async function uploadWallPhoto(file, groupId, caption, requestAuthWithScope) {
     Shortcut for VKWebAppCallAPIMethod
  */
 function api(method, params, needScope) {
-    return send('VKWebAppCallAPIMethod', { method, params: { ...params, needScope } });
+    return send('VKWebAppCallAPIMethod', { method, params, needScope });
 }
 
 /*
