@@ -54,6 +54,7 @@ let defaultOptions = {
     enableLog: true,
     defaultScope: '',
     disableAutoTheme: false,
+    uploadProxy: '',
 };
 
 let accessTokenGot = '';
@@ -287,10 +288,18 @@ async function uploadWallPhoto(file, groupId, caption, requestAuthWithScope) {
         formData.append('photo', photo);
 
         try {
-            const response = await fetch(uploadUrl, {
-                method: 'POST',
-                body: formData,
-            });
+            let response;
+            if (defaultOptions.uploadProxy) {
+                response = await fetch(`${defaultOptions.uploadProxy}?server=${encodeURI(uploadUrl)}`, {
+                    method: 'POST',
+                    body: formData,
+                });
+            } else {
+                response = await fetch(uploadUrl, {
+                    method: 'POST',
+                    body: formData,
+                });
+            }
             if (response.ok) {
                 const toSave = await response.json();
                 if (caption) toSave.caption = caption;
