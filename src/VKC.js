@@ -180,6 +180,9 @@ function mock(event, params) {
     Send event
  */
 async function send(event, params) {
+    if (defaultOptions.enableLog) {
+        console.log('...', event, params, currentScope, defaultOptions);
+    }
     if (!params) params = {};
     if (!initializationFinished) {
         console.error('You forgot to call VKC.init(...)');
@@ -194,14 +197,13 @@ async function send(event, params) {
                     return authRes;
                 }
             } else if (params.needScope) {
-                const { needScope } = params;
-                delete params.needScope;
-                if (currentScope !== '*' && currentScope.indexOf(needScope) < 0) {
-                    const authRes = autoAuth(needScope, true);
+                if (currentScope !== '*' && currentScope.indexOf(params.needScope) < 0) {
+                    const authRes = autoAuth(params.needScope, true);
                     if (authRes) {
                         return authRes;
                     }
                 }
+                delete params.needScope;
             } else {
                 console.error('Please, call API methods only after VKWebAppGetAuthToken or shortcut VKC.auth(scope)');
                 return nullValue();
