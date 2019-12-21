@@ -16,6 +16,7 @@ import VKWebAppAllowNotifications from './handlers/VKWebAppAllowNotifications';
 import VKWebAppStorageGet from './handlers/VKWebAppStorageGet';
 import VKWebAppStorageGetKeys from './handlers/VKWebAppStorageGetKeys';
 import VKWebAppStorageSet from './handlers/VKWebAppStorageSet';
+import VKWebAppAddToCommunity from './handlers/VKWebAppAddToCommunity';
 
 const handlers = {
     VKWebAppCallAPIMethod,
@@ -31,6 +32,7 @@ const handlers = {
     VKWebAppStorageGet,
     VKWebAppStorageGetKeys,
     VKWebAppStorageSet,
+    VKWebAppAddToCommunity,
 };
 
 // constants
@@ -231,9 +233,7 @@ async function send(event, params) {
     } else {
         // call VKConnect
         caller = 'VKConnect';
-        console.log(['ready to send', event, params]);
         result = await toAsync(connect.sendPromise(event, params));
-        console.log(result);
     }
 
     // if it was auth, store token
@@ -354,6 +354,13 @@ function scheme() {
     return currentScheme;
 }
 
+/*
+    Is dark scheme
+*/
+function isDark() {
+    return currentScheme.indexOf('_light') < 0;
+}
+
 export default {
     send,
     sendPromise,
@@ -364,4 +371,5 @@ export default {
     supports,
     define,
     scheme,
+    isDark,
 };
