@@ -89,7 +89,7 @@ function setMode() {
             connect.subscribe((e) => {
                 if (e.detail.type === 'VKWebAppUpdateConfig') {
                     const schemeAttribute = document.createAttribute('scheme');
-                    currentScheme = e.detail.data.scheme ? e.detail.data.scheme : 'client_light';
+                    currentScheme = e.detail.data.scheme || 'client_light';
                     schemeAttribute.value = currentScheme;
                     document.body.attributes.setNamedItem(schemeAttribute);
                 }
@@ -231,7 +231,9 @@ async function send(event, params) {
     } else {
         // call VKConnect
         caller = 'VKConnect';
+        console.log(['ready to send', event, params]);
         result = await toAsync(connect.sendPromise(event, params));
+        console.log(result);
     }
 
     // if it was auth, store token
@@ -348,8 +350,8 @@ function define(event, handler) {
 /*
     Get scheme
 */
-function isDark() {
-    return currentScheme !== 'client_light';
+function scheme() {
+    return currentScheme;
 }
 
 export default {
@@ -361,5 +363,5 @@ export default {
     uploadWallPhoto,
     supports,
     define,
-    isDark,
+    scheme,
 };
