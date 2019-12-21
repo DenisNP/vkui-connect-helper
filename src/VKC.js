@@ -287,7 +287,7 @@ async function uploadWallPhoto(file, groupId, caption, requestAuthWithScope) {
         formData.append('photo', photo);
 
         try {
-            const response = await fetch(defaultOptions.corsAddress + uploadUrl, {
+            const response = await fetch(uploadUrl, {
                 method: 'POST',
                 body: formData,
                 headers: { 'Content-Type': 'multipart/form-data' },
