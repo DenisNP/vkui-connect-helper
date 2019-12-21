@@ -146,9 +146,9 @@ async function autoAuth(scope, addToScopes) {
 
     if (result[0]) {
         if (addToScopes) {
-            addScope(result[0].data.scope);
+            addScope(result[0].scope);
         }
-        accessTokenGot = result[0].data.access_token;
+        accessTokenGot = result[0].access_token;
         defaultOptions.accessToken = accessTokenGot;
         return null;
     }
@@ -231,14 +231,14 @@ async function send(event, params) {
     }
 
     // if it was auth, store token
-    if (event === 'VKWebAppGetAuthToken' && result[0] && result[0].data && result[0].data.access_token) {
+    if (event === 'VKWebAppGetAuthToken' && result[0] && result[0] && result[0].access_token) {
         if (!accessTokenGot) {
             addScope(SCOPE_EMPTY);
         }
-        accessTokenGot = result[0].data.access_token;
+        accessTokenGot = result[0].access_token;
         defaultOptions.accessToken = accessTokenGot;
         defaultOptions.appId = params.app_id;
-        addScope(result[0].data.scope);
+        addScope(result[0].scope);
     }
 
     // log for dev environment
@@ -272,8 +272,8 @@ async function uploadWallPhoto(file, groupId, caption, requestAuthWithScope) {
     // eslint-disable-next-line no-use-before-define
     const uploadServer = await api('photos.getWallUploadServer', {}, requestAuthWithScope);
     const uploadUrl = uploadServer[0]
-        && uploadServer[0].data
-        && uploadServer[0].data.response.upload_url;
+        && uploadServer[0]
+        && uploadServer[0].response.upload_url;
 
     if (uploadUrl) {
         const photo = file;
