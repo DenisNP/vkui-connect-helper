@@ -10,13 +10,7 @@ export default function (params, options) {
         };
 
         api('wall.post', requestData, options)
-            .then(data => resolve({
-                type: 'VKWebAppShowWallPostBoxResult',
-                data: data[0],
-            }))
-            .catch(error => reject({
-                type: 'VKWebAppShowWallPostBoxFailed',
-                data: error,
-            }));
+            .then(data => resolve(data[0]))
+            .catch(error => reject(error));
     });
 }

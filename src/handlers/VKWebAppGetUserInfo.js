@@ -10,13 +10,7 @@ export default function (params, options) {
         };
 
         api('users.get', requestData, options)
-            .then(data => resolve({
-                type: 'VKWebAppGetUserInfoResult',
-                data: data[0],
-            }))
-            .catch(error => reject({
-                type: 'VKWebAppGetUserInfoFailed',
-                data: error,
-            }));
+            .then(data => resolve(data[0]))
+            .catch(error => reject(error));
     });
 }

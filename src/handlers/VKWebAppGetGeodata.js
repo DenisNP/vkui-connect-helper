@@ -20,31 +20,22 @@ export default function () {
             navigator.geolocation.getCurrentPosition(
                 (position) => {
                     resolve({
-                        type: 'VKWebAppGeodataResult',
-                        data: {
-                            available: 1,
-                            lat: position.coords.latitude,
-                            long: position.coords.longitude,
-                        },
+                        available: 1,
+                        lat: position.coords.latitude,
+                        long: position.coords.longitude,
                     });
                 },
                 (error) => {
                     reject({
-                        type: 'VKWebAppGeodataFailed',
-                        data: {
-                            error_type: error.code,
-                            error_data: getErrorData(error.code),
-                        },
+                        error_type: error.code,
+                        error_data: getErrorData(error.code),
                     });
                 },
             );
         } else {
             reject({
-                type: 'VKWebAppGeodataFailed',
-                data: {
-                    error_type: 'Not supported',
-                    error_data: '',
-                },
+                error_type: 'Not supported',
+                error_data: '',
             });
         }
     });

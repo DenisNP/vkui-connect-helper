@@ -7,10 +7,7 @@ export default function (_params, _options) {
             }
         }
         resolve({
-            type: 'VKWebAppAllowNotificationsResult',
-            data: {
-                result: true,
-            },
+            result: true,
         });
     });
 }

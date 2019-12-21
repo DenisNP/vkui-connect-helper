@@ -9,10 +9,7 @@ export default function (params, options) {
         }
 
         resolve({
-            type: 'VKWebAppStorageGetKeysResult',
-            data: {
-                keys,
-            },
+            keys,
         });
     });
 }

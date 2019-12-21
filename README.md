@@ -64,11 +64,11 @@ VKC.init({
 VKC.send('VKWebAppGetUserInfo', {})
   .then((userData) => {
     // делаем что нужно с данными пользователя
-    // userData = { type: 'VKWebAppGetUserInfoResult', data: { first_name: ..., last_name: ..., ...} }
+    // userData = { first_name: ..., last_name: ..., ... }
   })
   .catch((error) => {
     // произошла ошибка при вызове события
-    // error = { type: 'VKWebAppGetUserInfoFailed', data: {...some error data...} }
+    // error = { ...some error data... }
   });
 ```
 

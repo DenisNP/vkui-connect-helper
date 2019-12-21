@@ -14,10 +14,7 @@ export default function (params, options) {
         }
 
         resolve({
-            type: 'VKWebAppStorageGetResult',
-            data: {
-                keys,
-            },
+            keys,
         });
     });
 }

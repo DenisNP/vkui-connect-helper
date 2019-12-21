@@ -7,20 +7,14 @@ export default function (params, options) {
             console.log('Widget approved');
             console.log(widget);
             resolve({
-                type: 'VKWebAppShowCommunityWidgetPreviewBoxResult',
-                data: {
-                    result: true,
-                },
+                result: true,
             });
         } catch (err) {
             // eslint-disable-next-line prefer-promise-reject-errors
             reject({
-                type: 'VKWebAppShowCommunityWidgetPreviewBoxFailed',
-                data: {
-                    error_type: 'client_error',
-                    error_data: {
-                        err,
-                    },
+                error_type: 'client_error',
+                error_data: {
+                    err,
                 },
             });
         }

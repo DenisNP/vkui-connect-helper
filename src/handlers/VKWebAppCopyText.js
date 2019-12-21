@@ -16,10 +16,7 @@ export default function (params, options) {
     return new Promise((resolve) => {
         copyToClipboard(params.text);
         resolve({
-            type: 'VKWebAppCopyTextResult',
-            data: {
-                result: true,
-            },
+            result: true,
         });
     });
 }
