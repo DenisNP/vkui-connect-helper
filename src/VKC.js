@@ -228,6 +228,9 @@ async function send(event, params) {
         // call VKConnect
         caller = 'VKConnect';
         result = await toAsync(connect.sendPromise(event, params));
+        console.log();
+        console.log(result);
+        console.log();
     }
 
     // if it was auth, store token
