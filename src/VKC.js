@@ -185,7 +185,7 @@ async function send(event, params) {
     }
     // check some params
     if (event === 'VKWebAppCallAPIMethod') {
-        if (!accessTokenGot) {
+        if (!accessTokenGot || (params.needScope && currentScope.indexOf(params.needScope) < 0)) {
             if (defaultOptions.defaultScope) {
                 const authRes = autoAuth(defaultOptions.defaultScope);
                 if (authRes) {
