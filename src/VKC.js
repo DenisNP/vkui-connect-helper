@@ -287,11 +287,10 @@ async function uploadWallPhoto(file, groupId, caption, requestAuthWithScope) {
         formData.append('photo', photo);
 
         try {
-            const response = await fetch(uploadUrl, {
+            const response = await fetch(defaultOptions.corsAddress + uploadUrl, {
                 method: 'POST',
                 body: formData,
                 headers: { 'Content-Type': 'multipart/form-data' },
-                mode: 'no-cors',
             });
             if (response.ok) {
                 const toSave = await response.json();
