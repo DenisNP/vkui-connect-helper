@@ -192,13 +192,13 @@ async function send(event, params) {
     if (event === 'VKWebAppCallAPIMethod') {
         if (!accessTokenGot || (params.needScope && currentScope.indexOf(params.needScope) < 0)) {
             if (defaultOptions.defaultScope) {
-                const authRes = autoAuth(defaultOptions.defaultScope);
+                const authRes = await autoAuth(defaultOptions.defaultScope);
                 if (authRes) {
                     return authRes;
                 }
             } else if (params.needScope) {
                 if (currentScope !== '*' && currentScope.indexOf(params.needScope) < 0) {
-                    const authRes = autoAuth(params.needScope, true);
+                    const authRes = await autoAuth(params.needScope, true);
                     if (authRes) {
                         return authRes;
                     }
@@ -235,7 +235,7 @@ async function send(event, params) {
     }
 
     // if it was auth, store token
-    if (event === 'VKWebAppGetAuthToken' && result[0] && result[0] && result[0].access_token) {
+    if (event === 'VKWebAppGetAuthToken' && result[0] && result[0].access_token) {
         if (!accessTokenGot) {
             addScope(SCOPE_EMPTY);
         }
