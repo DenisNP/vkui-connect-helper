@@ -316,7 +316,7 @@ async function uploadWallPhoto(file, groupId, caption, requestAuthWithScope) {
                 if (caption) toSave.caption = caption;
                 if (groupId) toSave.group_id = groupId;
                 // eslint-disable-next-line no-use-before-define
-                const saved = await api('photos.saveWallPhoto', toSave);
+                const saved = await api('photos.saveWallPhoto', toSave, requestAuthWithScope);
                 return saved;
             }
 
