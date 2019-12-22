@@ -43,7 +43,7 @@ export const MODE_DEV = 'DEV';
 export const MODE_PROD = 'PROD';
 export const MODE_AUTO = 'AUTO';
 export const SCOPE_EMPTY = 'empty';
-const ALL_SCOPES = 'friends,groups,photos,wall,video,pages,status,notes,docs,stats,market';
+export const ALL_SCOPES = 'friends,groups,photos,wall,video,pages,status,notes,docs,stats,market';
 
 // options and internal vars
 let defaultOptions = {
