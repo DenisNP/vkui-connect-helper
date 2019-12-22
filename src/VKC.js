@@ -287,7 +287,7 @@ async function uploadWallPhoto(file, groupId, caption, requestAuthWithScope) {
     if (uploadUrl) {
         const photo = file;
         const formData = new FormData();
-        formData.append('photo', photo);
+        formData.append('photo', photo, 'image.jpg');
 
         try {
             let response;
