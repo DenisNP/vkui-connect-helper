@@ -43,6 +43,7 @@ export const MODE_DEV = 'DEV';
 export const MODE_PROD = 'PROD';
 export const MODE_AUTO = 'AUTO';
 export const SCOPE_EMPTY = 'empty';
+const ALL_SCOPES = 'friends,groups,photos,wall,video,pages,status,notes,docs,stats,market';
 
 // options and internal vars
 let defaultOptions = {
@@ -59,10 +60,27 @@ let defaultOptions = {
     uploadProxy: '',
 };
 
-let accessTokenGot = '';
-let currentScope = '';
+const accessTokens = {};
 let currentScheme = 'client_light';
 let initializationFinished = false;
+let initCallback = null;
+
+/*
+    Add scopes and store access token for each
+*/
+function addScopes(scope, token) {
+    const scopes = scope.split(',');
+    scopes.forEach((scp) => {
+        const s = scp.trim();
+        if (!accessTokens[s]) {
+            accessTokens[s] = token;
+        }
+    });
+
+    if (!accessTokens[SCOPE_EMPTY]) {
+        accessTokens[SCOPE_EMPTY] = token;
+    }
+}
 
 /*
     Check if there is VKConnect presented and set mode to DEV or PROD
@@ -88,21 +106,32 @@ function setMode() {
             if (defaultOptions.enableLog) log(`VKC inited in ${defaultOptions.mode} mode`);
         }
         initializationFinished = true;
+        const hasInit = (initCallback != null && typeof initCallback === 'function');
 
         // auto change theme
-        if (defaultOptions.mode === MODE_PROD && !defaultOptions.disableAutoTheme) {
+        if (defaultOptions.mode === MODE_PROD) {
             connect.subscribe((e) => {
-                if (e.detail.type === 'VKWebAppUpdateConfig') {
+                if (e.detail.type === 'VKWebAppUpdateConfig' && !defaultOptions.disableAutoTheme) {
                     const schemeAttribute = document.createAttribute('scheme');
                     currentScheme = e.detail.data.scheme || 'client_light';
                     schemeAttribute.value = currentScheme;
                     document.body.attributes.setNamedItem(schemeAttribute);
+                } else if (e.detail.type === 'VKWebAppViewRestore') {
+                    connect.send('VKWebAppInit', {});
+                    if (hasInit) {
+                        initCallback();
+                    }
                 }
             });
         }
 
-        if (defaultOptions.mode === MODE_DEV) {
-            currentScope = '*'; // set scope to anything because it is dev token
+        // add all scopes
+        if (defaultOptions.mode === MODE_DEV && defaultOptions.accessToken) {
+            addScopes(ALL_SCOPES, defaultOptions.accessToken);
+        }
+
+        if (hasInit) {
+            initCallback();
         }
     }
 }
@@ -128,20 +157,10 @@ function nullValue() {
     });
 }
 
-function addScope(scope) {
-    const s = scope === '' ? SCOPE_EMPTY : scope;
-    if (currentScope.indexOf(s) >= 0) return;
-
-    if (currentScope !== '') {
-        currentScope += ',';
-    }
-    currentScope += scope;
-}
-
 /*
     Auto auth
 */
-async function autoAuth(scope, addToScopes) {
+async function autoAuth(scope) {
     let result = [null, null];
     if (defaultOptions.asyncStyle) {
         // eslint-disable-next-line no-use-before-define
@@ -152,11 +171,7 @@ async function autoAuth(scope, addToScopes) {
     }
 
     if (result[0]) {
-        if (addToScopes) {
-            addScope(result[0].scope);
-        }
-        accessTokenGot = result[0].access_token;
-        defaultOptions.accessToken = accessTokenGot;
+        addScopes(result[0].scope, result[0].access_token);
         return null;
     }
 
@@ -186,7 +201,7 @@ function mock(event, params) {
  */
 async function send(event, params) {
     if (defaultOptions.enableLog) {
-        console.log(['...', event, params, accessTokenGot, currentScope]);
+        console.log(['...', event, params, accessTokens]);
     }
     if (!params) params = {};
     if (!initializationFinished) {
@@ -195,18 +210,17 @@ async function send(event, params) {
     }
     // check some params
     if (event === 'VKWebAppCallAPIMethod') {
-        if (!accessTokenGot || (params.needScope && currentScope.indexOf(params.needScope) < 0)) {
+        const needScope = params.needScope || SCOPE_EMPTY;
+        if (!accessTokens[needScope]) {
             if (defaultOptions.defaultScope) {
                 const authRes = await autoAuth(defaultOptions.defaultScope);
                 if (authRes) {
                     return authRes;
                 }
             } else if (params.needScope) {
-                if (currentScope !== '*' && currentScope.indexOf(params.needScope) < 0) {
-                    const authRes = await autoAuth(params.needScope, true);
-                    if (authRes) {
-                        return authRes;
-                    }
+                const authRes = await autoAuth(params.needScope, true);
+                if (authRes) {
+                    return authRes;
                 }
                 delete params.needScope;
             } else {
@@ -217,7 +231,7 @@ async function send(event, params) {
         // fix parameters if needed
         if (!params.params) params.params = {};
         if (!params.params.v) params.params.v = defaultOptions.apiVersion;
-        if (!params.params.access_token) params.params.access_token = accessTokenGot;
+        if (!params.params.access_token) params.params.access_token = accessTokens[needScope];
     }
     if (event === 'VKWebAppGetAuthToken' || event === 'VKWebAppGetCommunityAuthToken') {
         if (!params.app_id) params.app_id = parseInt(defaultOptions.appId, 10);
@@ -241,13 +255,8 @@ async function send(event, params) {
 
     // if it was auth, store token
     if (event === 'VKWebAppGetAuthToken' && result[0] && result[0].access_token) {
-        if (!accessTokenGot) {
-            addScope(SCOPE_EMPTY);
-        }
-        accessTokenGot = result[0].access_token;
-        defaultOptions.accessToken = accessTokenGot;
         defaultOptions.appId = params.app_id;
-        addScope(result[0].scope);
+        addScopes(result[0].scope, result[0].access_token);
     }
 
     // log for dev environment
@@ -349,8 +358,9 @@ function auth(scope) {
 /*
     Init entire module
  */
-function init(options) {
+function init(options, callback) {
     defaultOptions = Object.assign(defaultOptions, options);
+    initCallback = callback;
     setMode();
 }
 
