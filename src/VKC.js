@@ -17,6 +17,7 @@ import VKWebAppStorageGet from './handlers/VKWebAppStorageGet';
 import VKWebAppStorageGetKeys from './handlers/VKWebAppStorageGetKeys';
 import VKWebAppStorageSet from './handlers/VKWebAppStorageSet';
 import VKWebAppAddToCommunity from './handlers/VKWebAppAddToCommunity';
+import VKWebAppSetLocation from './handlers/VKWebAppSetLocation';
 
 const handlers = {
     VKWebAppCallAPIMethod,
@@ -33,6 +34,7 @@ const handlers = {
     VKWebAppStorageGetKeys,
     VKWebAppStorageSet,
     VKWebAppAddToCommunity,
+    VKWebAppSetLocation,
 };
 
 // constants
@@ -373,6 +375,13 @@ function isDark() {
     return currentScheme.indexOf('_light') < 0;
 }
 
+/*
+    return current mode
+*/
+function mode() {
+    return defaultOptions.mode;
+}
+
 export default {
     send,
     sendPromise,
@@ -384,4 +393,5 @@ export default {
     define,
     scheme,
     isDark,
+    mode,
 };
