@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign,no-case-declarations */
-import connect from '@vkontakte/vk-connect';
+import connect from '@vkontakte/vk-bridge';
 import { toAsync, log } from './utils';
 
 // Handlers
