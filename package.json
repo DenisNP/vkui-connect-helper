@@ -1,6 +1,6 @@
 {
   "name": "@denisnp/vkui-connect-helper",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Promise-based vkui-connect mock with advanced functionality",
   "main": "src/VKC.js",
   "scripts": {
