@@ -168,7 +168,7 @@ function nullValue() {
 }
 
 /*
-    Auto auth
+    Auto auth, returns null if ok and error otherwise
 */
 async function autoAuth(scope) {
     let result = [null, null];
@@ -225,11 +225,13 @@ async function send(event, params) {
             if (defaultOptions.defaultScope) {
                 const authRes = await autoAuth(defaultOptions.defaultScope);
                 if (authRes) {
+                    // autoAuth returns not null on error
                     return authRes;
                 }
             } else if (params.needScope) {
-                const authRes = await autoAuth(params.needScope, true);
+                const authRes = await autoAuth(params.needScope);
                 if (authRes) {
+                    // autoAuth returns not null on error
                     return authRes;
                 }
                 delete params.needScope;
