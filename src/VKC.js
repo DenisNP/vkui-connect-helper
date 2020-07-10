@@ -18,6 +18,7 @@ import VKWebAppStorageGetKeys from './handlers/VKWebAppStorageGetKeys';
 import VKWebAppStorageSet from './handlers/VKWebAppStorageSet';
 import VKWebAppAddToCommunity from './handlers/VKWebAppAddToCommunity';
 import VKWebAppSetLocation from './handlers/VKWebAppSetLocation';
+import VKWebAppShowStoryBox from './handlers/VKWebAppShowStoryBox';
 
 const handlers = {
     VKWebAppCallAPIMethod,
@@ -35,6 +36,7 @@ const handlers = {
     VKWebAppStorageSet,
     VKWebAppAddToCommunity,
     VKWebAppSetLocation,
+    VKWebAppShowStoryBox,
 };
 
 // constants
@@ -48,7 +50,7 @@ export const ALL_SCOPES = 'friends,groups,photos,wall,video,pages,status,notes,d
 // options and internal vars
 let defaultOptions = {
     corsAddress: 'https://cors-anywhere.herokuapp.com/',
-    apiVersion: '5.103',
+    apiVersion: '5.120',
     accessToken: '',
     communityToken: '',
     appId: 0,
@@ -140,7 +142,15 @@ function setMode() {
     Check if event handler is defined
  */
 function supports(event) {
-    return !!handlers[event];
+    if (defaultOptions.mode === MODE_DEV) return !!handlers[event];
+    return connect.supports(event);
+}
+
+/*
+    Check if web view
+ */
+function isWebView() {
+    return defaultOptions.mode === MODE_PROD && connect.isWebView();
 }
 
 /*
@@ -189,7 +199,7 @@ async function autoAuth(scope) {
     Mock call
  */
 function mock(event, params) {
-    if (supports(event)) {
+    if (!!handlers[event]) {
         const handler = handlers[event];
         return handler(params, defaultOptions);
     }
@@ -250,7 +260,7 @@ async function send(event, params) {
     } else {
         // call VKConnect
         caller = 'VKConnect';
-        result = await toAsync(connect.sendPromise(event, params));
+        result = await toAsync(connect.send(event, params));
     }
 
     // if it was auth, store token
@@ -273,10 +283,6 @@ async function send(event, params) {
         if (result[0]) resolve(result[0]);
         else reject(result[1]);
     });
-}
-
-function sendPromise(event, params) {
-    return send(event, params);
 }
 
 /*
@@ -394,7 +400,6 @@ function mode() {
 
 export default {
     send,
-    sendPromise,
     init,
     auth,
     api,
@@ -403,5 +408,6 @@ export default {
     define,
     scheme,
     isDark,
+    isWebView,
     mode,
 };

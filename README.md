@@ -136,6 +136,7 @@ https://oauth.vk.com/authorize?client_id=CLIENT_ID&display=page&redirect_uri=&sc
 - `VKWebAppStorageGetKeys` — весь блок Storage работает с `localStorage`
 - `VKWebAppStorageGet` — весь блок Storage работает с `localStorage`
 - `VKWebAppStorageSet` — весь блок Storage работает с `localStorage`
+- `VKWebAppShowStoryBox` — выдаёт данные Истории в консоль
 
 Проверить наличие поддержки нужного события можно с помощью
 ```js
