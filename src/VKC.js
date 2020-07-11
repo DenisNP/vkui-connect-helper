@@ -423,6 +423,7 @@ export default {
     uploadWallPhoto,
     supports,
     subscribe,
+    bridge,
     define,
     scheme,
     isDark,
