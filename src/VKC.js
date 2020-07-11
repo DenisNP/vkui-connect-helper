@@ -89,15 +89,16 @@ function addScopes(scope, token) {
  */
 function setMode() {
     if (!initializationFinished) {
+        if (defaultOptions.enableLog) log('VKC initializing...', defaultOptions, connect);
         if (defaultOptions.mode === MODE_AUTO) {
             // try to init with VKConnect
-            if (connect.isWebView() || !defaultOptions.accessToken) {
+            if (!defaultOptions.accessToken) {
                 connect.send('VKWebAppInit', {});
                 defaultOptions.mode = MODE_PROD;
-                if (defaultOptions.enableLog) log(`VKC inited in ${MODE_PROD} mode`);
+                if (defaultOptions.enableLog) log(`VKC initialized in ${MODE_PROD} mode, webview: ${connect.isWebView()}`);
             } else {
                 defaultOptions.mode = MODE_DEV;
-                if (defaultOptions.enableLog) log(`VKC inited in ${defaultOptions.mode} mode`);
+                if (defaultOptions.enableLog) log(`VKC initialized in ${defaultOptions.mode} mode, webview: ${connect.isWebView()}`);
             }
         } else {
             if (defaultOptions.mode === MODE_PROD) {
@@ -105,7 +106,7 @@ function setMode() {
                 connect.send('VKWebAppInit', {});
             }
             // force mode by options
-            if (defaultOptions.enableLog) log(`VKC inited in ${defaultOptions.mode} mode`);
+            if (defaultOptions.enableLog) log(`VKC initialized in ${defaultOptions.mode} mode, webview: ${connect.isWebView()}`);
         }
         initializationFinished = true;
         const hasInit = (initCallback != null && typeof initCallback === 'function');
