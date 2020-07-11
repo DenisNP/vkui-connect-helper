@@ -219,10 +219,10 @@ const [result, fail] = await VKC.uploadWallPhoto(file, groupId, caption, scope);
 ```js
 VKC.subscribe((e) => {
     const { type, data } = e.detail;
-     if (type === 'VKWebAppOpenCodeReaderResult') {
-        // Reading result of the Code Reader
-        console.log(data.code_data);
-     }
+    if (type === 'VKWebAppOpenCodeReaderResult') {
+       // Reading result of the Code Reader
+       console.log(data.code_data);
+    }
 });
 ```
 
