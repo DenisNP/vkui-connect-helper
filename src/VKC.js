@@ -147,6 +147,20 @@ function supports(event) {
 }
 
 /*
+    Subscribe to VKBridge events
+ */
+function subscribe(callback) {
+    return connect.subscribe(callback);
+}
+
+/*
+    Get VKBridge instance
+ */
+function bridge() {
+    return connect;
+}
+
+/*
     Check if web view
  */
 function isWebView() {
@@ -407,6 +421,7 @@ export default {
     api,
     uploadWallPhoto,
     supports,
+    subscribe,
     define,
     scheme,
     isDark,

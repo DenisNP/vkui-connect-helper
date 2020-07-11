@@ -214,6 +214,25 @@ const [result, fail] = await VKC.uploadWallPhoto(file, groupId, caption, scope);
 ```
 В поле `file` нужно передавать результат работы `<input type="file"/>`. В `result` приходит ответ от метода `photos.saveWallPhoto`, если всё прошло хорошо. Поле `scope` нужно для того, чтобы использовать автоматическую авторизацию, если это требуется.
 
+### Подписка на события
+Функция полностью аналогична такой функции в VKBridge
+```js
+VKC.subscribe((e) => {
+    const { type, data } = e.detail;
+     if (type === 'VKWebAppOpenCodeReaderResult') {
+        // Reading result of the Code Reader
+        console.log(data.code_data);
+     }
+});
+```
+
+### Прочие вызовы
+В целом экземпляр VKBridge можно вызвать с помощью
+```js
+const bridge = VKC.bridge();
+bridge.send(...);
+```
+
 ## Поддержка остальных событий и участие в разработке
 Если кто-то возьмётся за реализацию ещё каких-то событий, присылайте пулл-реквесты. Не забывайте проверить свой код на соответствие правилам, в этом проекте я использую [code-style от Airbnb](https://github.com/airbnb/javascript) с отступом **4 пробела**.
 
