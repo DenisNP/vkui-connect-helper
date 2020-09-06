@@ -10,7 +10,7 @@ export default function (params, options) {
         };
 
         api('users.get', requestData, options)
-            .then(data => resolve(data[0]))
+            .then(data => resolve(data.response[0]))
             .catch(error => reject(error));
     });
 }

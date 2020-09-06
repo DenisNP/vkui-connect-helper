@@ -10,7 +10,7 @@ export default function (params, options) {
         };
 
         api('wall.post', requestData, options)
-            .then(data => resolve(data[0]))
+            .then(data => resolve(data.response))
             .catch(error => reject(error));
     });
 }
