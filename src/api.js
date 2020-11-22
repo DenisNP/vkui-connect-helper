@@ -5,7 +5,12 @@ import { MODE_DEV, API_ADDRESS } from './VKC';
  */
 export default function (method, parameters, options) {
     // construct string
-    const address = `${options.mode === MODE_DEV ? options.corsAddress : ''}${API_ADDRESS}/method/${method}`;
+    let address = `${options.mode === MODE_DEV ? options.corsAddress : ''}${API_ADDRESS}/method/${method}?v=${parameters.v}`;
+    if (parameters.access_token) address += `&access_token=${parameters.access_token}`;
+
+    delete parameters.v;
+    delete parameters.access_token;
+
     const requestOptions = {
         method: 'POST',
         headers: {
