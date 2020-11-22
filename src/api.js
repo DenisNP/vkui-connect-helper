@@ -11,13 +11,12 @@ export default function (method, parameters, options) {
     delete parameters.v;
     delete parameters.access_token;
 
+    const formData = new FormData();
+    Object.keys(parameters).forEach((k) => formData.append(k, parameters[k]));
+
     const requestOptions = {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            Accept: 'application/json',
-        },
-        body: JSON.stringify(parameters),
+        body: formData,
     };
     // construct promise
     return new Promise((resolve, reject) => {
