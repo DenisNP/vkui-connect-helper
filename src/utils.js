@@ -6,16 +6,6 @@ export function toAsync(promise) {
         .catch(err => [null, err]);
 }
 
-/*
-    Stringify parameters to GET url string
- */
-export function stringifyParams(params) {
-    const paramsKeys = Object.keys(params);
-    return paramsKeys.length > 0
-        ? `?${paramsKeys.map(key => `${key}=${params[key]}`).join('&')}`
-        : '';
-}
-
 export function log(...args) {
     if (console) {
         console.log(...args);

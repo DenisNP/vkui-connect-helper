@@ -1,20 +1,18 @@
 /* eslint-disable no-param-reassign */
-import { stringifyParams } from './utils';
 import { MODE_DEV, API_ADDRESS } from './VKC';
 /*
     VK API call
  */
 export default function (method, parameters, options) {
     // construct string
-    const paramsString = stringifyParams(parameters);
-    const address = `${options.mode === MODE_DEV ? options.corsAddress : ''}${API_ADDRESS}/method/${method}${paramsString}`;
-    // request options // TODO POST
+    const address = `${options.mode === MODE_DEV ? options.corsAddress : ''}${API_ADDRESS}/method/${method}`;
     const requestOptions = {
-        method: 'GET',
+        method: 'POST',
         headers: {
             'Content-Type': 'application/json',
             Accept: 'application/json',
         },
+        body: JSON.stringify(parameters),
     };
     // construct promise
     return new Promise((resolve, reject) => {
